@@ -116,6 +116,11 @@ class Bot:
     @Command()
     def handle_message(self, update: Update, context: CallbackContext) -> None:
         self.logger.info("Handle message: {}".format(update.effective_message.text))
+        chat: Chat = context.chat_data["chat"]
+
+        message = ", ".join([user.markdown_mention() for user in chat.users])
+
+        update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
 
     @Command()
     def handle_left_chat_member(self, update: Update, context: CallbackContext) -> None:

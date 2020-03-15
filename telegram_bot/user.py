@@ -45,3 +45,6 @@ class User:
             "muted": self.muted,
             "id": self.id
         }
+
+    def markdown_mention(self) -> str:
+        return f"[{self.name}](tg://user?id={self.id})"
