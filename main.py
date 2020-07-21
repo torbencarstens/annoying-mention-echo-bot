@@ -25,6 +25,7 @@ def start(bot_token: str):
     logger.debug("Register command handlers")
     # CommandHandler
     dispatcher.add_handler(CommandHandler("users", bot.show_users))
+    dispatcher.add_handler(CommandHandler("users_to_annoy", bot.annoy_users_list))
 
     # chat_admin
     dispatcher.add_handler(CommandHandler("delete_chat", bot.delete_chat))
@@ -41,7 +42,7 @@ def start(bot_token: str):
     # MessageHandler
     dispatcher.add_handler(MessageHandler(Filters.command, bot.handle_unknown_command))
     dispatcher.add_handler(
-        MessageHandler(Filters.text, bot.handle_message))
+        MessageHandler(Filters.all, bot.handle_message))
     dispatcher.add_handler(
         MessageHandler(Filters.status_update.left_chat_member, bot.handle_left_chat_member))
     dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_members, bot.new_member))

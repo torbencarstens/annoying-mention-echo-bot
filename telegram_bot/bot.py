@@ -116,11 +116,23 @@ class Bot:
     @Command()
     def handle_message(self, update: Update, context: CallbackContext) -> None:
         self.logger.info("Handle message: {}".format(update.effective_message.text))
+        message_user: User = context.user_data["user"]
         chat: Chat = context.chat_data["chat"]
 
-        message = ", ".join([user.markdown_mention() for user in chat.users])
+        message = ", ".join([user.markdown_mention() for user in chat.users_to_mention() if user.name != message_user.name])
 
         update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
+
+    @Command()
+    def annoy_users_list(self, update: Update, context: CallbackContext) -> None:
+        chat: Chat = context.chat_data["chat"]
+        usernames = context.args
+
+        for user in chat.users:
+            if user.name in usernames:
+                user.annoy = True
+            else:
+                user.annoy = False
 
     @Command()
     def handle_left_chat_member(self, update: Update, context: CallbackContext) -> None:

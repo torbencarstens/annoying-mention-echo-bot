@@ -13,6 +13,7 @@ class User:
         self._internal = chat_user
         self.muted = False
         self.messages: Set[Message] = set()
+        self.annoy = True
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, User):
@@ -36,6 +37,7 @@ class User:
     def deserialize(cls, json: Dict[str, Any]) -> User:
         user = User(json.get("name"), json.get("id"))
         user.muted = json.get("muted", False)
+        user.annoy = json.get("annoy", True)
 
         return user
 
@@ -43,7 +45,8 @@ class User:
         return {
             "name": self.name,
             "muted": self.muted,
-            "id": self.id
+            "id": self.id,
+            "annoy": self.annoy
         }
 
     def markdown_mention(self) -> str:

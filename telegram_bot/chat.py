@@ -164,3 +164,12 @@ class Chat:
 
     def __repr__(self) -> str:
         return f"<{self.id} | {self.title}>"
+
+    def users_to_mention(self) -> List[User]:
+        users = []
+
+        for user in self.users:
+            if user.annoy:
+                users.append(user)
+
+        return users
