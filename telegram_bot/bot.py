@@ -121,7 +121,7 @@ class Bot:
 
         message = ", ".join([user.markdown_mention() for user in chat.users_to_mention() if user.name != message_user.name])
 
-        update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN)
+        update.message.reply_text(message, parse_mode=ParseMode.MARKDOWN, disable_notification=True)
 
     @Command()
     def annoy_users_list(self, update: Update, context: CallbackContext) -> None:
