@@ -86,9 +86,7 @@ def start(bot_token: str):
 if __name__ == "__main__":
     import json
 
-    token = os.getenv("BOT_TOKEN")
-    print(token)
-    print(os.environ)
+    token = os.getenv("BOT_TOKEN").strip()
 
     # noinspection PyBroadException
     try:
