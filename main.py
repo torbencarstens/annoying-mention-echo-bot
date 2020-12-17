@@ -2,7 +2,6 @@ import os
 import sys
 import threading
 
-import sentry_sdk
 from telegram import TelegramError
 from telegram.ext import CommandHandler, Updater, MessageHandler, Filters
 
@@ -87,20 +86,11 @@ def start(bot_token: str):
 if __name__ == "__main__":
     import json
 
-    with open("secrets.json") as f:
-        content = json.load(f)
-        token = content['token']
-        try:
-            sentry_dsn = content['sentry_dsn']
-        except KeyError:
-            sentry_dsn = None
-
-    sentry_sdk.init(sentry_dsn)
+    token = os.getenv("BOT_TOKEN")
 
     # noinspection PyBroadException
     try:
         start(token)
     except Exception as e:
-        sentry_sdk.capture_exception()
         create_logger("__main__").error(e)
         sys.exit(1)
