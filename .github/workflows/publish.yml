@@ -1,0 +1,38 @@
+name: Build/Publish docker image
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Login to dockerhub
+        run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u torbencarstens --password-stdin
+      - name: Get the version
+        id: vars
+        run: echo ::set-output name=tag::$(echo ${GITHUB_SHA})
+      - name: update version in telegram_bot/bot.py
+        run: sed -i -e "s/{{VERSION}}/${{steps.vars.outputs.tag}}/" telegram_bot/bot.py
+      - name: Build the tagged Docker image
+        run: docker build -t torbencarstens/annoying-bot:${{steps.vars.outputs.tag}} .
+      - name: Push the tagged Docker image
+        run: docker push torbencarstens/annoying-bot:${{steps.vars.outputs.tag}}
+      - name: update BOT_TOKEN
+        run: sed -i -e "s/{{BOT_TOKEN}}/${{ secrets.BOT_TOKEN }}/g" .kubernetes/manifest.yaml
+      - name: update DOCKER_TAG
+        run: sed -i -e "s/{{DOCKER_TAG}}/${{steps.vars.outputs.tag}}/g" .kubernetes/manifest.yaml
+      - uses: danielr1996/kubectl-action@1.0.0
+        name: apply config
+        with:
+          kubeconfig: ${{ secrets.K8SCONF }}
+          args: apply -f .kubernetes/manifest.yaml
+      - uses: danielr1996/kubectl-action@1.0.0
+        name: apply config
+        with:
+          kubeconfig: ${{ secrets.K8SCONF }}
+          args: delete -n telegram-bots rs -l "app in \(annoying-bot\), dockertag notin \(${{steps.vars.outputs.tag}}\)"
+
