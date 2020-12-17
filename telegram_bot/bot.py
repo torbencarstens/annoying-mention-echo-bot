@@ -125,7 +125,11 @@ class Bot:
     @Command()
     def annoy_users_list(self, update: Update, context: CallbackContext) -> None:
         chat: Chat = context.chat_data["chat"]
+        user: User = context.user_data["user"]
         usernames = context.args
+
+        if int(user.id) != 139656428:
+            return
 
         for user in chat.users:
             if user.name in usernames:

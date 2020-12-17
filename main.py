@@ -87,6 +87,8 @@ if __name__ == "__main__":
     import json
 
     token = os.getenv("BOT_TOKEN")
+    print(token)
+    print(os.environ)
 
     # noinspection PyBroadException
     try:
